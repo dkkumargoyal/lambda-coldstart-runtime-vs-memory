@@ -2,6 +2,7 @@ service: aws-coldstart-golang
 
 provider:
   name: aws
+  region: eu-west-1
   runtime: go1.x
   versionFunctions: false
 

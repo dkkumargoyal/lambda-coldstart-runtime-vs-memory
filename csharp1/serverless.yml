@@ -2,6 +2,7 @@ service: aws-coldstart-csharp1
 
 provider:
   name: aws
+  region: eu-west-1
   runtime: dotnetcore1.0
   versionFunctions: false
 

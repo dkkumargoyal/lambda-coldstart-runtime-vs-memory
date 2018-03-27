@@ -2,6 +2,7 @@ service: aws-coldstart-python3
 
 provider:
   name: aws
+  region: eu-west-1
   runtime: python3.6
   versionFunctions: false
 
