@@ -10,7 +10,7 @@ for i in `seq 1 10`;
     cd $folder
     pwd
     
-    sls remove
+    sls deploy
 
     cd ..
   done
