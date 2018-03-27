@@ -3,8 +3,8 @@ declare -a folders=("csharp1" "csharp2" "java" "python2" "python3" "golang" "nod
 
 #export AWS_PROFILE=personal
 
-#for i in `seq 1 10`;
-#do
+for i in `seq 1 10`;
+  do
   for folder in "${folders[@]}"
   do
     cd $folder
@@ -15,5 +15,5 @@ declare -a folders=("csharp1" "csharp2" "java" "python2" "python3" "golang" "nod
     cd ..
   done
 
-#  node invoke-functions.js
-#done
+  node invoke-functions.js
+done

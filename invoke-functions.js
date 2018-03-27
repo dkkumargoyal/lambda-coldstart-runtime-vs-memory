@@ -2,7 +2,7 @@
 
 const co = require('co');
 const AWS = require('aws-sdk');
-AWS.config.region = 'us-east-1';
+AWS.config.region = 'eu-west-1';
 const Lambda = new AWS.Lambda();
 
 let functions = [];

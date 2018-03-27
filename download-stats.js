@@ -4,7 +4,7 @@ const _ = require('lodash');
 const co = require('co');
 const Promise = require('bluebird');
 const AWS = require('aws-sdk');
-AWS.config.region = 'us-east-1';
+AWS.config.region = 'eu-west-1';
 const cloudwatch = Promise.promisifyAll(new AWS.CloudWatch());
 const Lambda = new AWS.Lambda();
 
