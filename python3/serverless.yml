@@ -26,3 +26,7 @@ functions:
   memory-1536:
     handler: handler.hello
     memorySize: 1536
+
+  memory-3000:
+    handler: handler.hello
+    memorySize: 3000

@@ -17,7 +17,7 @@ let listFunctions = co.wrap(function* (marker, acc) {
 
     let functions = resp.Functions
         .map(f => f.FunctionName)
-        .filter(fn => fn.includes("aws-coldstart") && !fn.endsWith("run"));
+        .filter(fn => fn.includes("aws-coldstart-" + process.argv[2]) && !fn.endsWith("run"));
 
     acc = acc.concat(functions);
 
@@ -38,10 +38,15 @@ let run = co.wrap(function* () {
 
     console.log("invoking $LATEST...");
     for (let func of functions) {
-        yield Lambda.invoke({
+
+        //Lambda.invoke()
+        Lambda.invoke({
             FunctionName: func,
             InvocationType: "Event"
-        }).promise();
+        }, function (err, data) {
+            if (err) console.log("Invocation Error: " + func); // an error occurred
+            else console.log("Invocation Success: " + func); // successful response
+        });
     }
 });
 
