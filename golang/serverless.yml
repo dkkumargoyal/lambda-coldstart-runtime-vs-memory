@@ -5,6 +5,7 @@ provider:
   region: eu-west-1
   runtime: go1.x
   versionFunctions: false
+  timeout: 30
 
 package:
   artifact: bin/deploy-package.zip

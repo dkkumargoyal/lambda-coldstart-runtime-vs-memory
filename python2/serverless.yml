@@ -5,6 +5,7 @@ provider:
   region: eu-west-1
   runtime: python2.7
   versionFunctions: false
+  timeout: 30
 
 functions:
   memory-128:

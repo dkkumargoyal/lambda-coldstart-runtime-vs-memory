@@ -5,6 +5,7 @@ provider:
   region: eu-west-1
   runtime: java8
   versionFunctions: false
+  timeout: 30
 
 package:
   artifact: target/hello-dev.jar

@@ -5,7 +5,8 @@ provider:
   region: eu-west-1
   runtime: dotnetcore2.0
   versionFunctions: false
-
+  timeout: 30
+  
 package:
   artifact: bin/release/netcoreapp2.0/deploy-package.zip
 
