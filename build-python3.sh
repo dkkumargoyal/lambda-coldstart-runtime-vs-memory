@@ -3,7 +3,7 @@ declare -a folders=("python3")
 
 #export AWS_PROFILE=personal
 
-for i in `seq 1 10`;
+for i in `seq 1 200`;
   do
   for folder in "${folders[@]}"
   do

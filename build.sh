@@ -3,7 +3,7 @@ declare -a folders=("csharp1" "csharp2" "java" "python2" "python3" "golang" "nod
 
 #export AWS_PROFILE=personal
 
-for i in `seq 1 10`;
+for i in `seq 1 200`;
   do
   for folder in "${folders[@]}"
   do
