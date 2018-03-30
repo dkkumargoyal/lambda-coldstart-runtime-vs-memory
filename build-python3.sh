@@ -15,9 +15,9 @@ for i in `seq 1 200`;
     cd ..
   done
 
-  sleep 60
+  sleep 10
 
-  node invoke-functions.js java python3
+  node invoke-functions.js python3
 
-  sleep 60
+  sleep 20
 done

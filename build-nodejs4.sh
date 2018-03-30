@@ -1,5 +1,5 @@
 #!/bin/bash
-declare -a folders=("nodejs6")
+declare -a folders=("nodejs4")
 
 #export AWS_PROFILE=personal
 
@@ -15,9 +15,9 @@ for i in `seq 1 200`;
     cd ..
   done
 
-  sleep 60
+  sleep 10
 
-  node invoke-functions.js nodejs6
+  node invoke-functions.js nodejs4
 
-  sleep 60
+  sleep 20
 done
