@@ -15,9 +15,9 @@ for i in `seq 1 200`;
     cd ..
   done
 
-  sleep 60
+  sleep 10
 
   node invoke-functions.js golang
 
-  sleep 60
+  sleep 20
 done
