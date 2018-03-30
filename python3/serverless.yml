@@ -4,7 +4,7 @@ provider:
   name: aws
   region: eu-west-1
   runtime: python3.6
-  versionFunctions: false
+  versionFunctions: true
   timeout: 30
 
 functions:
