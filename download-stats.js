@@ -3,81 +3,72 @@
 const _ = require('lodash');
 const co = require('co');
 const Promise = require('bluebird');
+var sleep = require('sleep');
 const AWS = require('aws-sdk');
 AWS.config.region = 'eu-west-1';
-const cloudwatch = Promise.promisifyAll(new AWS.CloudWatch());
-const Lambda = new AWS.Lambda();
 
-const START_TIME = new Date('2018-03-27T00:00:00.000Z');
-const DAYS = 2;
-const ONE_DAY = 24 * 60 * 60 * 1000;
+var cloudwatchlogs = new AWS.CloudWatchLogs();
 
-let addDays = (startDt, n) => new Date(startDt.getTime() + ONE_DAY * n);
+var params = {
+    //limit: 100,
+    logGroupNamePrefix: '/aws/lambda/aws-coldstart',
+    //nextToken: 'STRING_VALUE'
+};
+cloudwatchlogs.describeLogGroups(params, function (err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else {
+        //console.log(data.logGroups.length); // successful response
 
-let getFuncStats = co.wrap(function* (funcName) {
-    let getStats = co.wrap(function* (startTime, endTime) {
-        let req = {
-            MetricName: 'Duration',
-            Namespace: 'AWS/Lambda',
-            Period: 60,
-            Dimensions: [{
-                Name: 'FunctionName',
-                Value: funcName
-            }],
-            Statistics: ['Maximum'],
-            Unit: 'Milliseconds',
-            StartTime: startTime,
-            EndTime: endTime
-        };
-        let resp = yield cloudwatch.getMetricStatisticsAsync(req);
-
-        return resp.Datapoints.map(dp => {
-            return {
-                timestamp: dp.Timestamp,
-                value: dp.Maximum
-            };
-        });
-    });
-
-    let stats = [];
-    for (let i = 0; i < DAYS; i++) {
-        // CloudWatch only allows us to query 1440 data points per request, which 
-        // at 1 min period is 24 hours
-        let startTime = addDays(START_TIME, i);
-        let endTime = addDays(startTime, 1);
-        let oneDayStats = yield getStats(startTime, endTime);
-
-        stats = stats.concat(oneDayStats);
-    }
-
-    return _.sortBy(stats, s => s.timestamp);
-});
-
-let listFunctions = co.wrap(function* (marker, acc) {
-    acc = acc || [];
-
-    let resp = yield Lambda.listFunctions({
-        Marker: marker,
-        MaxItems: 100
-    }).promise();
-
-    let functions = resp.Functions
-        .map(f => f.FunctionName)
-        .filter(fn => fn.includes("aws-coldstart") && !fn.endsWith("run"));
-
-    acc = acc.concat(functions);
-
-    if (resp.NextMarker) {
-        return yield listFunctions(resp.NextMarker, acc);
-    } else {
-        return acc;
-    }
-});
-
-listFunctions()
-    .then(co.wrap(function* (funcs) {
-        for (let func of funcs) {
-            let stats = yield getFuncStats(func);
-            stats.forEach(stat => console.log(`${func},${stat.timestamp},${stat.value}`));
+        for (var i = 0; i < data.logGroups.length; i++) {
+            fetchEvents(data.logGroups[i].logGroupName);
         }
-    }));
+    }
+});
+
+let fetchEvents = co.wrap(function* (groupName, marker) {
+    // acc = acc || [];
+
+    var params = {
+        logGroupName: groupName,
+        //        endTime: 0,
+        filterPattern: 'Billed Duration',
+        interleaved: true,
+        limit: 10000,
+        //  logStreamNames: [
+        // 'STRING_VALUE',
+        // ],
+        nextToken: marker,
+        //startTime: 0
+    };
+
+    let resp = yield cloudwatchlogs.filterLogEvents(params).promise();
+
+    var grParts = groupName.split('-');
+
+    var runtime = grParts[2];
+
+    for (var j = 0; j < resp.events.length; j++) {
+        var msg = resp.events[j].message;
+        var msgParts = msg.split('\t');
+        //console.log(msg);
+
+        var memoryAllocated = msgParts[3].replace('Memory Size: ', '').replace(' MB', '');
+        var duration = msgParts[1].replace('Duration: ', '').replace(' ms', '');
+        var memoryUsed = msgParts[4].replace('Max Memory Used: ', '').replace(' MB', '');
+        var timestmp = resp.events[j].timestamp;
+
+        console.log(runtime + ',' + memoryAllocated + ',' + duration + ',' + memoryUsed + ',' + timestmp);
+    }
+
+    sleep.sleep(1);
+
+    //console.log(resp.events[0].message);
+
+    // process.exit();
+
+    if (resp.nextToken) {
+        fetchEvents(groupName, resp.nextToken);
+    } else {
+        //return acc;
+    }
+});

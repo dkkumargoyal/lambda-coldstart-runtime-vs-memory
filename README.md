@@ -19,4 +19,6 @@ sudo npm install serverless -g
 
 7. node download-stats.js > result.csv
 
-8. 
+8. node analyse.js > aggregate.csv
+
+now you can study the data in result.csv and aggregate.csv and gain insights.
